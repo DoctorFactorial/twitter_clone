@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/DoctorFactorial/twitter_clone",
   "dependencies": {
+    "body-parser": "^1.13.0",
     "express": "^4.12.3",
     "lodash": "^3.7.0"
   }

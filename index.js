@@ -2,6 +2,7 @@ var _ = require('lodash')
 	, express = require('express')
 	, fixtures = require('./fixtures')
 	, app = express()
+	, bodyParser = require('body-parser')
 
 app.get('/api/tweets', function (req, res) {
 	if (!req.query.userId) {
@@ -14,7 +15,7 @@ app.get('/api/tweets', function (req, res) {
 	res.send({ tweets: sortedTweets })
 })
 
-app.get('/api/users/:userId', function(req, res) {
+app.get('/api/users/:userId', function (req, res) {
   var user = _.find(fixtures.users, 'id', req.params.userId)
 
   if (!user) {
@@ -22,6 +23,21 @@ app.get('/api/users/:userId', function(req, res) {
   }
 
   res.send({ user: user })
+})
+
+app.use(bodyParser.json())
+
+app.post('/api/users', function (req, res) {
+  var user = req.body.user
+
+  if (_.find(fixtures.users, 'id', user.id)) {
+    return res.sendStatus(409)
+  }
+
+  user.followingIds = []
+  fixtures.users.push(user)
+
+  res.sendStatus(200)
 })
 
 var server = app.listen(3000, '127.0.0.1')
