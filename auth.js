@@ -3,6 +3,7 @@ var _ = require('lodash')
 	, fixtures = require('./fixtures')
 	, LocalStrategy = require('passport-local').Strategy
 
+// Maintain persistent login sessions
 passport.serializeUser(function(user, done) {
   done(null, user.id)
 })
@@ -17,6 +18,7 @@ passport.deserializeUser(function(id, done) {
 	done(null, user)
 })
 
+// Local authentication strategy
 function verify(username, password, done) {
   var user = _.find(fixtures.users, 'id', username)
 

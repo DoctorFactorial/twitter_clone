@@ -87,7 +87,44 @@ app.delete('/api/tweets/:tweetId', function (req, res) {
 	res.sendStatus(200)
 })
 
-//Server
+// Authentication route
+app.post('/api/auth/login', function (req, res) {
+  passport.authenticate('local', function (err, user, info) {
+    if (err) {
+      return res.sendStatus(500)
+    }
+    if (!user) {
+      return res.sendStatus(403)
+    }
+    req.login(user, function(err) {
+      if (err) {
+        return res.sendStatus(500)
+      }
+      return res.send({ user: user })
+    })
+  })(req, res)
+})
+
+// middleware implementation
+function ensureAuthentication(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next()
+  }
+  res.sendStatus(403)
+}
+
+// load middleware at route level
+app.delete('/api/tweets/:tweetId', ensureAuthentication, function(req, res) {
+  var removedTweets = _.remove(fixtures.tweets, 'id', req.params.tweetId)
+
+  if (removedTweets.length === 0) {
+    return res.sendStatus(404)
+  }
+
+  res.sendStatus(200)
+})
+
+// Export server
 var server = app.listen(3000, '127.0.0.1')
 
 module.exports = server
