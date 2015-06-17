@@ -1,10 +1,27 @@
 var _ = require('lodash')
 	, express = require('express')
-	, fixtures = require('./fixtures')
+	, cookieParser = require('cookie-parser')
+	, session = require('express-session')
+	, passport = require('./auth')
 	, app = express()
+	, fixtures = require('./fixtures')
 	, bodyParser = require('body-parser')
 	, shortId = require('shortid')
 
+// Authentication
+app.use(bodyParser.json())
+app.use(cookieParser())
+
+app.use(session({
+	secret: 'keyboard cat',
+	resave: false,
+	saveUninitialized: true
+}))
+
+app.use(passport.initialize())
+app.use(passport.session())
+
+// Routes
 app.get('/api/tweets', function (req, res) {
 	if (!req.query.userId) {
 		return res.sendStatus(400)
@@ -25,8 +42,6 @@ app.get('/api/users/:userId', function (req, res) {
 
   res.send({ user: user })
 })
-
-app.use(bodyParser.json())
 
 app.post('/api/users', function (req, res) {
   var user = req.body.user
@@ -72,6 +87,7 @@ app.delete('/api/tweets/:tweetId', function (req, res) {
 	res.sendStatus(200)
 })
 
+//Server
 var server = app.listen(3000, '127.0.0.1')
 
 module.exports = server
