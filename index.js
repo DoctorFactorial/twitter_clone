@@ -20,7 +20,7 @@ app.get('/api/users/:userId', function (req, res) {
   var user = _.find(fixtures.users, 'id', req.params.userId)
 
   if (!user) {
-	return res.sendStatus(404)
+	  return res.sendStatus(404)
   }
 
   res.send({ user: user })
@@ -32,7 +32,7 @@ app.post('/api/users', function (req, res) {
   var user = req.body.user
 
   if (_.find(fixtures.users, 'id', user.id)) {
-	return res.sendStatus(409)
+	  return res.sendStatus(409)
   }
 
   user.followingIds = []
@@ -48,6 +48,16 @@ app.post('/api/tweets', function (req, res) {
 	tweet.created = Date.now() / 1000 | 0
 	
 	fixtures.tweets.push(tweet)
+
+	res.send({ tweet: tweet })
+})
+
+app.get('/api/tweets/:tweetId', function (req, res) {
+	var tweet = _.find(fixtures.tweets, 'id', req.params.tweetId)
+
+	if (!tweet) {
+	  return res.sendStatus(404)
+	}
 
 	res.send({ tweet: tweet })
 })
