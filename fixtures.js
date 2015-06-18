@@ -40,5 +40,5 @@ var tweets = [
 }
 ]
 
-module.exports.users = users;
-module.exports.tweets = tweets;
+module.exports.users = users
+module.exports.tweets = tweets

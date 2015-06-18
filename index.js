@@ -7,6 +7,7 @@ var _ = require('lodash')
 	, fixtures = require('./fixtures')
 	, bodyParser = require('body-parser')
 	, shortId = require('shortid')
+  , config = require('./config')
 
 // Authentication
 app.use(bodyParser.json())
@@ -135,6 +136,6 @@ app.delete('/api/tweets/:tweetId', ensureAuthentication, function(req, res) {
 })
 
 // Export server
-var server = app.listen(3000, '127.0.0.1')
+var server = app.listen(config.get('server:port'), config.get('server:host'))
 
 module.exports = server
