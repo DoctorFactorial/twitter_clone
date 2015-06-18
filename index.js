@@ -77,15 +77,6 @@ app.get('/api/tweets/:tweetId', function (req, res) {
 	res.send({ tweet: tweet })
 })
 
-app.delete('/api/tweets/:tweetId', function (req, res) {
-	var removedTweets = _.remove(fixtures.tweets, 'id', req.params.tweetId)
-
-	if (removedTweets.length === 0) {
-		return res.sendStatus(404)
-	}
-
-	res.sendStatus(200)
-})
 
 // Authentication route
 app.post('/api/auth/login', function (req, res) {
