@@ -56,11 +56,14 @@ app.post('/api/users', function (req, res) {
   res.sendStatus(200)
 })
 
-app.post('/api/tweets', function (req, res) {
+app.post('/api/tweets', ensureAuthentication, function (req, res) {
 	var tweet = req.body.tweet
 
 	tweet.id = shortId.generate()
 	tweet.created = Date.now() / 1000 | 0
+
+	// overwrite the userId field with the authenticated user id
+	tweet.userId = req.user.id
 	
 	fixtures.tweets.push(tweet)
 
@@ -106,12 +109,18 @@ function ensureAuthentication(req, res, next) {
 
 // load middleware at route level
 app.delete('/api/tweets/:tweetId', ensureAuthentication, function(req, res) {
-  var removedTweets = _.remove(fixtures.tweets, 'id', req.params.tweetId)
+  var tweet = _.find(fixtures.tweets, 'id', req.params.tweetId)
 
-  if (removedTweets.length === 0) {
-    return res.sendStatus(404)
+  if (!tweet) {
+  	return res.sendStatus(404)
   }
 
+  if (tweet.userId !== req.user.id) {
+    return res.sendStatus(403)
+  }
+
+  _.remove(fixtures.tweets, 'id', req.params.tweetId)
+  
   res.sendStatus(200)
 })
 
