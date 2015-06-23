@@ -53,13 +53,13 @@ app.post('/api/users', function (req, res) {
     if (err) {
       if (err.code === 11000) return res.sendStatus(409)
     }
-  })
-
-  req.login(user, function (err) {
-  	if (err) {
-  		return res.sendStatus(500)
-  	}
-  	res.sendStatus(200)
+    
+    req.login(user, function (err) {
+    if (err) {
+      return res.sendStatus(500)
+    }
+    res.sendStatus(200)
+    })
   })
 })
 
