@@ -8,6 +8,8 @@ var _ = require('lodash')
 	, bodyParser = require('body-parser')
 	, shortId = require('shortid')
   , config = require('./config')
+  , conn = require('./db')
+  , User = conn.model('User')
 
 // Authentication
 app.use(bodyParser.json())
@@ -45,14 +47,13 @@ app.get('/api/users/:userId', function (req, res) {
 })
 
 app.post('/api/users', function (req, res) {
-  var user = req.body.user
+  var user = new User(req.body.user)
 
-  if (_.find(fixtures.users, 'id', user.id)) {
-	  return res.sendStatus(409)
-  }
-
-  user.followingIds = []
-  fixtures.users.push(user)
+  user.save(function (err) {
+    if (err) {
+      if (err.code === 11000) return res.sendStatus(409)
+    }
+  })
 
   req.login(user, function (err) {
   	if (err) {
